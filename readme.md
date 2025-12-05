@@ -3,6 +3,10 @@ example rust signed xml
 
 Signing and verifying XML documents with the `quick-xml` and `rsa` crates.
 
+## run
+
+`$ example-sign-verify test/data/sample-input.xml`
+****
 ## sample input
 
 ```xml
