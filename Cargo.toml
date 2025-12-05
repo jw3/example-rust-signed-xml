@@ -3,4 +3,13 @@ name = "example-rust-signed-xml"
 version = "0.1.0"
 edition = "2024"
 
+[[bin]]
+name = "example"
+path = "src/main.rs"
+
 [dependencies]
+quick-xml = "0.38"
+rsa = "0.9"
+sha2 = { version = "0.10", features = ["oid"]}
+base64 = "0.22"
+thiserror = "2"
