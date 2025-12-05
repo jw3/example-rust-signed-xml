@@ -1,29 +1,23 @@
+use std::fs;
+use std::path::PathBuf;
+use clap::Parser;
 use example_rust_signed_xml::crypto::KeyPair;
 use example_rust_signed_xml::error::Result;
 use example_rust_signed_xml::xml::XmlDocument;
 
+#[derive(Debug, Clone, Parser)]
+struct Opts {
+    source: PathBuf,
+}
+
 fn main() -> Result<()> {
+    let opts = Opts::parse();
+
     println!("Generating RSA key pair (2048 bits)...");
     let keypair = KeyPair::generate(2048)?;
     println!("Key pair generated successfully\n");
 
-    let xml_content = r#"<?xml version="1.0" encoding="UTF-8"?>
-<Document>
-    <Header id="h1">
-        <Title>Sample Document</Title>
-        <Author>John Doe</Author>
-    </Header>
-    <Body>
-        <Section name="intro">
-            <Paragraph>This is the first paragraph.</Paragraph>
-            <Paragraph>This is the second paragraph.</Paragraph>
-        </Section>
-        <Section name="conclusion">
-            <Paragraph>This is the conclusion.</Paragraph>
-        </Section>
-    </Body>
-</Document>"#;
-
+    let xml_content = fs::read_to_string(&opts.source)?;
     let doc = XmlDocument::new(xml_content.to_string());
 
     let nodes = doc.read_nodes()?;
