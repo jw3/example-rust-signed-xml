@@ -15,41 +15,28 @@ fn main() -> Result<()> {
 
     println!("Generating 4096 bit RSA key pair...");
     let keypair = KeyPair::generate(4096)?;
-    println!("Key pair generated successfully\n");
 
     let xml_content = fs::read_to_string(&opts.source)?;
     let doc = XmlDocument::new(xml_content.to_string());
-
     let nodes = doc.read_nodes()?;
-    for (i, node) in nodes.iter().enumerate() {
-        println!("Node {}: <{}>", i + 1, node.name);
-        if !node.attributes.is_empty() {
-            for (key, value) in &node.attributes {
-                println!("  @{} = \"{}\"", key, value);
-            }
-        }
-        if let Some(text) = &node.text_content {
-            println!("  Content: {}", text);
-        }
-    }
-    println!("Read {} total unsigned nodes", nodes.len());
+    println!("Original: {} nodes", nodes.len());
 
     println!("Signing XML document...");
     let signed_doc = doc.sign(&keypair.private_key)?;
-    println!("Document signed successfully, signature: {}...", &signed_doc.signature[..20]);
+    println!("Document signature: {}...", &signed_doc.signature[..20]);
 
     let signed_nodes = signed_doc.read_nodes()?;
-    println!("Read {} total nodes (including signature)", signed_nodes.len());
+    println!("Updated: {} nodes", signed_nodes.len());
 
     if signed_nodes.iter().find(|n| n.name == "Signature").is_some() {
-        println!("Signature element found in document");
+        println!("Signature element is present");
     }
-
-    let is_valid = signed_doc.verify(&keypair.public_key)?;
-    println!("Is signature valid: {}", is_valid);
 
     println!("Signed XML document:");
     println!("{}", signed_doc.content);
+
+    let is_valid = signed_doc.verify(&keypair.public_key)?;
+    println!("Is signature valid: {}", is_valid);
 
     Ok(())
 }

@@ -89,20 +89,17 @@ impl XmlDocument {
 
         loop {
             match reader.read_event_into(&mut buf) {
-                Ok(Event::Start(e)) => {
-                    writer.write_event(Event::Start(e))?;
+                Ok(e @ Event::Start(_) | e@ Event::End(_)) => {
+                    writer.write_event(e)?;
                 }
-                Ok(Event::End(e)) => {
-                    writer.write_event(Event::End(e))?;
+                Ok(e @ Event::Empty(_)) => {
+                    writer.write_event(e)?;
                 }
                 Ok(Event::Text(e)) => {
                     let text = e.decode()?;
                     if !text.trim().is_empty() {
                         writer.write_event(Event::Text(BytesText::new(&text)))?;
                     }
-                }
-                Ok(Event::Empty(e)) => {
-                    writer.write_event(Event::Empty(e))?;
                 }
                 Ok(Event::Eof) => break,
                 Err(e) => return Err(XmlSignError::XmlError(e)),
