@@ -7,7 +7,7 @@ use rsa::rand_core::OsRng;
 use rsa::signature::{RandomizedSigner, SignatureEncoding, Verifier};
 use rsa::RsaPrivateKey;
 use rsa::RsaPublicKey;
-use sha2::{Digest, Sha256};
+use sha2::{Digest, Sha512};
 use std::io::Cursor;
 
 #[derive(Debug, Clone)]
@@ -118,11 +118,11 @@ impl XmlDocument {
     pub fn sign(&self, private_key: &RsaPrivateKey) -> Result<SignedXmlDocument> {
         let canonical = self.canonicalize()?;
 
-        let mut hasher = Sha256::new();
+        let mut hasher = Sha512::new();
         hasher.update(canonical.as_bytes());
         let hash = hasher.finalize();
 
-        let signing_key: SigningKey<Sha256> = SigningKey::new(private_key.clone());
+        let signing_key: SigningKey<Sha512> = SigningKey::new(private_key.clone());
         let signature = signing_key.sign_with_rng(&mut OsRng, &hash);
 
         let signature_b64 = general_purpose::STANDARD.encode(signature.to_bytes());
@@ -210,14 +210,14 @@ impl SignedXmlDocument {
         let doc = XmlDocument::new(original_content);
         let canonical = doc.canonicalize()?;
 
-        let mut hasher = Sha256::new();
+        let mut hasher = Sha512::new();
         hasher.update(canonical.as_bytes());
         let hash = hasher.finalize();
 
         let signature_bytes = general_purpose::STANDARD.decode(&self.signature)?;
         let signature = rsa::pkcs1v15::Signature::try_from(signature_bytes.as_slice())?;
 
-        let verifying_key = VerifyingKey::<Sha256>::new(public_key.clone());
+        let verifying_key = VerifyingKey::<Sha512>::new(public_key.clone());
         match verifying_key.verify(&hash, &signature) {
             Ok(_) => Ok(true),
             Err(_) => Ok(false),

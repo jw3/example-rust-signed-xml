@@ -13,8 +13,8 @@ struct Opts {
 fn main() -> Result<()> {
     let opts = Opts::parse();
 
-    println!("Generating RSA key pair (2048 bits)...");
-    let keypair = KeyPair::generate(2048)?;
+    println!("Generating 4096 bit RSA key pair...");
+    let keypair = KeyPair::generate(4096)?;
     println!("Key pair generated successfully\n");
 
     let xml_content = fs::read_to_string(&opts.source)?;
