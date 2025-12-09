@@ -53,3 +53,15 @@ Signing and verifying XML documents with the `quick-xml` and `rsa` crates.
   </Body>
 </Document>
 ```
+
+## reference
+
+- https://www.aleksey.com/xmlsec/
+- https://github.com/lsh123/xmlsec
+- https://github.com/lsh123/xmlsec/blob/master/examples/sign1-tmpl.xml
+- https://github.com/lsh123/xmlsec/blob/master/examples/sign1-res.xml
+- https://sgros.blogspot.com/2013/01/signing-xml-document-using-xmlsec1.html
+- https://gitlab.com/reinis-mazeiks/xml_c14n
+- https://docs.rs/serde-xml-rs/latest/serde_xml_rs/#attributes
+- https://github.com/tafia/quick-xml
+- 
